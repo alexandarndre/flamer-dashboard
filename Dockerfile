@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24-alpine AS build
+FROM node:25-alpine AS build
 WORKDIR /app
 COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn/releases .yarn/releases
@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/root/.yarn/berry/cache node .yarn/releases/yarn-*
 COPY . .
 RUN node .yarn/releases/yarn-*.cjs build && node .yarn/releases/yarn-*.cjs build:server
 
-FROM node:24-alpine
+FROM node:25-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000
 COPY --from=build /app/dist dist
