@@ -8,7 +8,7 @@ RUN --mount=type=cache,target=/root/.yarn/berry/cache node .yarn/releases/yarn-*
 COPY . .
 RUN node .yarn/releases/yarn-*.cjs build
 
-FROM ghcr.io/astral-sh/uv:0.12.17 AS uv
+FROM ghcr.io/astral-sh/uv:0.13.6 AS uv
 
 FROM python:3.13-slim AS venv
 COPY --from=uv /uv /usr/local/bin/uv
