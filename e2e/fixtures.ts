@@ -4,14 +4,23 @@ export const test = base.extend<{ page: Page; allowConsole: RegExp[]; firstVisit
   allowConsole: [[], { option: true }],
   firstVisit: [false, { option: true }],
   page: async ({ page, allowConsole, firstVisit }, use) => {
-    const problems: string[] = []
+    const problems: { text: string; url: string }[] = []
+    const spaFallbacks = new Set<string>()
+    if (process.env.E2E_BACKEND === 'static')
+      page.on('response', (r) => {
+        if (r.status() === 404 && r.request().isNavigationRequest()) spaFallbacks.add(r.url())
+      })
     page.on('console', (m) => {
-      if (m.type() === 'error' && !allowConsole.some((r) => r.test(m.text()))) problems.push(m.text())
+      if (m.type() === 'error' && !allowConsole.some((r) => r.test(m.text())))
+        problems.push({ text: m.text(), url: m.location().url })
     })
-    page.on('pageerror', (e) => problems.push(e.message))
+    page.on('pageerror', (e) => problems.push({ text: e.message, url: '' }))
     if (!firstVisit) await page.addInitScript(() => localStorage.setItem('flamer-tour-seen', '1'))
     await use(page)
-    expect(problems, 'console errors').toEqual([])
+    expect(
+      problems.filter((p) => !spaFallbacks.has(p.url)).map((p) => p.text),
+      'console errors',
+    ).toEqual([])
   },
 })
 
