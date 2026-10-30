@@ -7,13 +7,10 @@ The crawler is simulated, but it is backed by a real API that runs the same way 
 (Docker), inside a Service Worker (GitHub Pages) and in the Vite dev server, plus a **Python (FastAPI + Postgres)
 implementation of the same API** that is proven identical against shared golden fixtures.
 
-**Publishing it?** Follow [HANDOFF.md](HANDOFF.md): one push, and CI, both deployments and live smoke tests run on every
-commit from then on.
-
-| Live demo                              |                                     |
-| -------------------------------------- | ----------------------------------- |
-| Vercel (edge API + Redis)              | `https://<your-project>.vercel.app` |
-| GitHub Pages (API in a Service Worker) | `https://<user>.github.io/<repo>/`  |
+| Live demo                              |                                                   |
+| -------------------------------------- | ------------------------------------------------- |
+| Vercel (edge API + Redis)              | https://flamer-dashboard.vercel.app               |
+| GitHub Pages (API in a Service Worker) | https://alexandarndre.github.io/flamer-dashboard/ |
 
 ![Overview](docs/screenshots/overview.png)
 
@@ -304,5 +301,4 @@ tests/                       Vitest suites; fixtures/golden.json is the engine o
 e2e/                         Playwright browser tests (@smoke ones also run against the live deployments)
 backend-python/              FastAPI + PostgreSQL implementation of the same API (see its README)
 .github/                     CI, GitHub Pages deploy + smoke test, Vercel smoke test, Dependabot
-HANDOFF.md                   Step-by-step publishing guide
 ```
