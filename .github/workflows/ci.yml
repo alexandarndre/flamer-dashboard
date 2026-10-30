@@ -18,7 +18,7 @@ jobs:
     name: Web · lint, types, unit tests, builds
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -36,7 +36,7 @@ jobs:
     name: Web · browser tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v5
         with:
           node-version: 24
@@ -73,7 +73,7 @@ jobs:
     env:
       TEST_DATABASE_URL: postgresql+asyncpg://flamer:flamer@localhost:5432/flamer
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
@@ -87,7 +87,7 @@ jobs:
     name: Docker · build both images and smoke-test the stack
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: docker compose --profile python build
       - run: docker compose --profile python up -d --wait
       - name: Smoke test Node and Python APIs
