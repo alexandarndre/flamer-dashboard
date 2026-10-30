@@ -1,0 +1,84 @@
+name: flamer
+
+services:
+  app:
+    build: .
+    ports:
+      - '${FLAMER_PORT:-3000}:3000'
+    environment:
+      KV_REST_API_URL: http://redis-http
+      KV_REST_API_TOKEN: ${REDIS_HTTP_TOKEN:-flamer-local}
+    depends_on:
+      redis-http:
+        condition: service_started
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://127.0.0.1:3000/api/health']
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  redis-http:
+    image: hiett/serverless-redis-http:0.0.10
+    environment:
+      SRH_MODE: env
+      SRH_TOKEN: ${REDIS_HTTP_TOKEN:-flamer-local}
+      SRH_CONNECTION_STRING: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: ['redis-server', '--appendonly', 'yes']
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  postgres:
+    profiles: [python]
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: flamer
+      POSTGRES_PASSWORD: flamer
+      POSTGRES_DB: flamer
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'flamer', '-d', 'flamer']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  app-python:
+    profiles: [python]
+    build:
+      context: .
+      dockerfile: backend-python/Dockerfile
+    ports:
+      - '${FLAMER_PYTHON_PORT:-3001}:8000'
+    environment:
+      DATABASE_URL: postgresql+asyncpg://flamer:flamer@postgres:5432/flamer
+      STATIC_DIR: /app/dist
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'python', '-c', "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  postgres-data:

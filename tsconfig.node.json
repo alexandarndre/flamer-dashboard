@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2024",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["node"],
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    "paths": { "@/*": ["./src/*"] }
+  },
+  "include": [
+    "vite.config.ts",
+    "vite.sw.config.ts",
+    "vite.server.config.ts",
+    "vite-plugin-api.ts",
+    "api",
+    "src/node",
+    "tests",
+    "e2e",
+    "playwright.config.ts"
+  ]
+}
