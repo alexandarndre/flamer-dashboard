@@ -74,7 +74,7 @@ jobs:
       TEST_DATABASE_URL: postgresql+asyncpg://flamer:flamer@localhost:5432/flamer
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
       - run: uv sync --locked
