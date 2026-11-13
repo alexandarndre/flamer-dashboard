@@ -10,14 +10,14 @@ RUN node .yarn/releases/yarn-*.cjs build
 
 FROM ghcr.io/astral-sh/uv:0.12.17 AS uv
 
-FROM python:3.13-slim AS venv
+FROM python:3.15-slim AS venv
 COPY --from=uv /uv /usr/local/bin/uv
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never UV_PROJECT_ENVIRONMENT=/app/.venv
 WORKDIR /app
 COPY backend-python/pyproject.toml backend-python/uv.lock backend-python/.python-version ./
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-install-project --python /usr/local/bin/python3
 
-FROM python:3.13-slim
+FROM python:3.15-slim
 RUN useradd --system --uid 10001 --home-dir /app --shell /usr/sbin/nologin flamer
 WORKDIR /app
 COPY --from=venv /app/.venv .venv
